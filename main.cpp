@@ -20,6 +20,7 @@ Make the following program work, which makes use of Variadic templates and Recur
 #include <iostream>
 #include <string>
 #include <typeinfo>
+#include <utility>
 
 struct Point
 {
@@ -51,7 +52,61 @@ struct Wrapper
     { 
         std::cout << "Wrapper(" << typeid(val).name() << ")" << std::endl; 
     }
+
+    void print()
+    {
+        std::cout << "Wrapper::print(" << val << ")\n";
+    }
+private:
+    Type val;
 };
+
+// Challenge 1: Can you figure out how to eliminate the duplicate constructor?
+/*template<>
+struct Wrapper<Point>
+{
+    using Type = Point;
+
+    Wrapper(Type&& t) : val(std::move(t)) 
+    { 
+        std::cout << "Wrapper(" << typeid(val).name() << ")" << std::endl; 
+    }
+
+    void print()
+    {
+        std::cout << "Wrapper::print(" << val.toString() << ")\n";
+    }
+
+private:
+    Type val;
+};*/
+
+template<>
+void Wrapper<Point>::print()
+{
+    std::cout << "Wrapper::print(" << val.toString() << ")" << std::endl;
+}
+
+// Challenge 2: Another recursive solution
+void variadicHelper();
+
+template<typename T, typename ... Args>
+void variadicHelper(T&& first, Args&& ... everythingElse)
+{
+    Wrapper<T>( std::forward<T>(first) ).print();
+
+    variadicHelper( std::forward<Args>(everythingElse) ... );
+}
+
+/*template<typename T>
+void variadicHelper(T&& only)
+{
+    Wrapper<T>( std::forward<T>(only) ).print();
+}*/
+
+void variadicHelper() // for call with empty Args ...
+{
+}
 
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
