@@ -61,7 +61,8 @@ private:
     Type val;
 };
 
-template<>
+// Challenge 1: Can you figure out how to eliminate the duplicate constructor?
+/*template<>
 struct Wrapper<Point>
 {
     using Type = Point;
@@ -78,8 +79,15 @@ struct Wrapper<Point>
 
 private:
     Type val;
-};
+};*/
 
+template<>
+void Wrapper<Point>::print()
+{
+    std::cout << "Wrapper::print(" << val.toString() << ")" << std::endl;
+}
+
+// Challenge 2: Another recursive solution
 void variadicHelper();
 
 template<typename T, typename ... Args>
@@ -90,10 +98,14 @@ void variadicHelper(T&& first, Args&& ... everythingElse)
     variadicHelper( std::forward<Args>(everythingElse) ... );
 }
 
-template<typename T>
+/*template<typename T>
 void variadicHelper(T&& only)
 {
     Wrapper<T>( std::forward<T>(only) ).print();
+}*/
+
+void variadicHelper() // for call with empty Args ...
+{
 }
 
 /*
